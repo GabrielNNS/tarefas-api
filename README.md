@@ -11,10 +11,15 @@ API RESTful para gerenciamento de tarefas, desenvolvida com Spring Boot. Permite
 - Spring Data JPA
 - PostgreSQL
 - Maven
+- Swagger
+- Flyway
+- Docker (PostgreSQL)
 
 ---
 
 ## 🚀 Endpoints principais
+
+### Swagger: `/swagger-ui/index.html`
 
 | Método | Rota             | Descrição               |
 |--------|------------------|-------------------------|
@@ -32,3 +37,11 @@ API RESTful para gerenciamento de tarefas, desenvolvida com Spring Boot. Permite
 
 - Java 24
 - Maven
+
+### Tutorial
+
+- Carregar as dependências do Maven no arquivo pom.xml
+- criar o arquivo `.env` na raiz do projeto e definir as variáveis `DB_NAME`, `DB_PASSWORD` e `DB_USER`
+- Ter o docker instalado e subir o container `docker-compose up -d`
+- Configurar as variáveis de ambiente `DB_NAME`, `DB_PASSWORD` e `DB_USER` na IDE (ou outra forma que o Spring reconheça)
+- Executar `TarefasApiApplication`
