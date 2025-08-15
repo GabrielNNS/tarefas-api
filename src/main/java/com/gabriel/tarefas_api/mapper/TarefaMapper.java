@@ -15,7 +15,11 @@ public class TarefaMapper {
     }
 
     public TarefaOutputDTO toTarefaOutputDTO(Tarefa tarefa){
-        return new TarefaOutputDTO(tarefa.getId(), tarefa.getNome(), tarefa.getDescricao(), tarefa.getConcluida());
+        return new TarefaOutputDTO(tarefa.getId(),
+                                    tarefa.getNome(),
+                                    tarefa.getDescricao(),
+                                    tarefa.getConcluida(),
+                                    tarefa.getDataCriacao());
     }
 
     public List<TarefaOutputDTO> tarefaOutputDTOList(List<Tarefa> tarefas){
