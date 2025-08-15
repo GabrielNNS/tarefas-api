@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,10 +25,12 @@ public class Tarefa {
     private String nome;
     private String descricao;
     private Boolean concluida;
+    private LocalDateTime dataCriacao;
 
     public Tarefa(String nome, String descricao) {
         this.nome = nome;
         this.descricao = descricao;
         this.concluida = false;
+        this.dataCriacao = LocalDateTime.now();
     }
 }
