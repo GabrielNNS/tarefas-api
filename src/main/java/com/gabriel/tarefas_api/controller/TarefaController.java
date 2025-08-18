@@ -1,7 +1,7 @@
 package com.gabriel.tarefas_api.controller;
 
-import com.gabriel.tarefas_api.dto.TarefaInputDTO;
-import com.gabriel.tarefas_api.dto.TarefaOutputDTO;
+import com.gabriel.tarefas_api.dto.TarefaRequest;
+import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.service.ITarefaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,22 +21,22 @@ public class TarefaController {
     }
 
     @PostMapping
-    public ResponseEntity<TarefaOutputDTO> criar(@RequestBody @Valid TarefaInputDTO dto) {
+    public ResponseEntity<TarefaResponse> criar(@RequestBody @Valid TarefaRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.criarTarefa(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<TarefaOutputDTO>> listar() {
+    public ResponseEntity<List<TarefaResponse>> listar() {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TarefaOutputDTO> buscarId(@PathVariable Long id) {
+    public ResponseEntity<TarefaResponse> buscarId(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TarefaOutputDTO> atualizar(@PathVariable Long id, @RequestBody @Valid TarefaInputDTO dto) {
+    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id, @RequestBody @Valid TarefaRequest dto) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.atualizar(id, dto));
     }
 
@@ -47,7 +47,7 @@ public class TarefaController {
     }
 
     @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<TarefaOutputDTO> atualizar(@PathVariable Long id) {
+    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.alternarConclusao(id));
     }
 }
