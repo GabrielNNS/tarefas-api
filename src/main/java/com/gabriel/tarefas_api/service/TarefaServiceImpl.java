@@ -25,19 +25,19 @@ public class TarefaServiceImpl implements ITarefaService {
     public TarefaResponse criarTarefa(TarefaRequest dto){
         Tarefa tarefa = mapper.toEntity(dto);
         repository.save(tarefa);
-        return mapper.toTarefaOutputDTO(tarefa);
+        return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
     public List<TarefaResponse> listar(){
-        return mapper.tarefaOutputDTOList(repository.findAll());
+        return mapper.tarefaResponseList(repository.findAll());
     }
 
     @Override
     public TarefaResponse buscarPorId(Long id){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
-        return mapper.toTarefaOutputDTO(tarefa);
+        return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TarefaServiceImpl implements ITarefaService {
         tarefa.setNome(dto.nome());
         tarefa.setDescricao(dto.descricao());
         repository.save(tarefa);
-        return mapper.toTarefaOutputDTO(tarefa);
+        return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
@@ -64,6 +64,6 @@ public class TarefaServiceImpl implements ITarefaService {
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
         tarefa.setConcluida(!tarefa.getConcluida());
         repository.save(tarefa);
-        return mapper.toTarefaOutputDTO(tarefa);
+        return mapper.toTarefaResponse(tarefa);
     }
 }

@@ -14,7 +14,7 @@ public class TarefaMapper {
         return new Tarefa(dto.nome(), dto.descricao());
     }
 
-    public TarefaResponse toTarefaOutputDTO(Tarefa tarefa){
+    public TarefaResponse toTarefaResponse(Tarefa tarefa){
         return new TarefaResponse(tarefa.getId(),
                                     tarefa.getNome(),
                                     tarefa.getDescricao(),
@@ -22,9 +22,9 @@ public class TarefaMapper {
                                     tarefa.getDataCriacao());
     }
 
-    public List<TarefaResponse> tarefaOutputDTOList(List<Tarefa> tarefas){
+    public List<TarefaResponse> tarefaResponseList(List<Tarefa> tarefas){
         return tarefas.stream()
-                      .map(this::toTarefaOutputDTO)
+                      .map(this::toTarefaResponse)
                       .toList();
     }
 }
