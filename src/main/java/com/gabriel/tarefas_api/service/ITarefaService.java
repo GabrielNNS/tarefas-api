@@ -1,16 +1,16 @@
 package com.gabriel.tarefas_api.service;
 
-import com.gabriel.tarefas_api.dto.TarefaInputDTO;
-import com.gabriel.tarefas_api.dto.TarefaOutputDTO;
+import com.gabriel.tarefas_api.dto.TarefaRequest;
+import com.gabriel.tarefas_api.dto.TarefaResponse;
 
 import java.util.List;
 
 public interface ITarefaService {
 
-    TarefaOutputDTO criarTarefa(TarefaInputDTO dto);
-    List<TarefaOutputDTO> listar();
-    TarefaOutputDTO buscarPorId(Long id);
-    TarefaOutputDTO atualizar(Long id, TarefaInputDTO dto);
+    TarefaResponse criarTarefa(TarefaRequest dto);
+    List<TarefaResponse> listar();
+    TarefaResponse buscarPorId(Long id);
+    TarefaResponse atualizar(Long id, TarefaRequest dto);
     void deletar(Long id);
-    TarefaOutputDTO alternarConclusao(Long id);
+    TarefaResponse alternarConclusao(Long id);
 }

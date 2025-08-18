@@ -1,7 +1,7 @@
 package com.gabriel.tarefas_api.service;
 
-import com.gabriel.tarefas_api.dto.TarefaInputDTO;
-import com.gabriel.tarefas_api.dto.TarefaOutputDTO;
+import com.gabriel.tarefas_api.dto.TarefaRequest;
+import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.mapper.TarefaMapper;
 import com.gabriel.tarefas_api.model.Tarefa;
 import com.gabriel.tarefas_api.repository.TarefaRepository;
@@ -22,26 +22,26 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public TarefaOutputDTO criarTarefa(TarefaInputDTO dto){
+    public TarefaResponse criarTarefa(TarefaRequest dto){
         Tarefa tarefa = mapper.toEntity(dto);
         repository.save(tarefa);
         return mapper.toTarefaOutputDTO(tarefa);
     }
 
     @Override
-    public List<TarefaOutputDTO> listar(){
+    public List<TarefaResponse> listar(){
         return mapper.tarefaOutputDTOList(repository.findAll());
     }
 
     @Override
-    public TarefaOutputDTO buscarPorId(Long id){
+    public TarefaResponse buscarPorId(Long id){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
         return mapper.toTarefaOutputDTO(tarefa);
     }
 
     @Override
-    public TarefaOutputDTO atualizar(Long id, TarefaInputDTO dto){
+    public TarefaResponse atualizar(Long id, TarefaRequest dto){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
         tarefa.setNome(dto.nome());
@@ -59,7 +59,7 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public TarefaOutputDTO alternarConclusao(Long id){
+    public TarefaResponse alternarConclusao(Long id){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
         tarefa.setConcluida(!tarefa.getConcluida());

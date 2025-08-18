@@ -2,7 +2,7 @@ package com.gabriel.tarefas_api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record TarefaInputDTO(
+public record TarefaRequest(
         @NotBlank
         String nome,
         @NotBlank
