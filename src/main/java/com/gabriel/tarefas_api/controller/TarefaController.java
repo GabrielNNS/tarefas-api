@@ -2,9 +2,8 @@ package com.gabriel.tarefas_api.controller;
 
 import com.gabriel.tarefas_api.dto.TarefaInputDTO;
 import com.gabriel.tarefas_api.dto.TarefaOutputDTO;
-import com.gabriel.tarefas_api.service.TarefaService;
+import com.gabriel.tarefas_api.service.ITarefaService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("/tarefas")
 public class TarefaController {
 
-    @Autowired
-    private TarefaService service;
+    private final ITarefaService service;
+
+    public TarefaController(ITarefaService service){
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<TarefaOutputDTO> criar(@RequestBody @Valid TarefaInputDTO dto) {
