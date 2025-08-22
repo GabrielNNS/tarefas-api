@@ -27,9 +27,9 @@ public class Tarefa {
     private Boolean concluida;
     private LocalDateTime dataCriacao;
 
-    public Tarefa(String nome, String descricao) {
-        this.nome = nome;
-        this.descricao = descricao;
+    public Tarefa(TarefaBuilder tarefaBuilder) {
+        this.nome = tarefaBuilder.getNome();
+        this.descricao = tarefaBuilder.getDescricao();
         this.concluida = false;
         this.dataCriacao = LocalDateTime.now();
     }

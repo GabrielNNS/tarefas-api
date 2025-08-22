@@ -3,6 +3,7 @@ package com.gabriel.tarefas_api.mapper;
 import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.model.Tarefa;
+import com.gabriel.tarefas_api.model.TarefaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -29,12 +30,9 @@ public class TarefaMapperTest {
 
     @Test
     public void toTarefaResponseTest() {
-        Tarefa tarefa = new Tarefa();
-        tarefa.setId(1L);
-        tarefa.setNome("Teste2");
-        tarefa.setDescricao("Text");
-        tarefa.setDataCriacao(LocalDateTime.now());
-        tarefa.setConcluida(false);
+        Tarefa tarefa = new TarefaBuilder().nome("Teste2")
+                .descricao("Text")
+                .build();
 
         TarefaResponse tarefaResponse = mapper.toTarefaResponse(tarefa);
 
@@ -48,19 +46,14 @@ public class TarefaMapperTest {
 
     @Test
     public void tarefaResponseListTest() {
-        Tarefa tarefa = new Tarefa();
-        tarefa.setId(1L);
-        tarefa.setNome("Teste2");
-        tarefa.setDescricao("Text");
-        tarefa.setDataCriacao(LocalDateTime.now());
-        tarefa.setConcluida(false);
+        Tarefa tarefa = new TarefaBuilder().nome("Teste2")
+                .descricao("Text")
+                .build();
 
-        Tarefa tarefa2 = new Tarefa();
-        tarefa2.setId(2L);
-        tarefa2.setNome("Teste3");
-        tarefa2.setDescricao("Text");
-        tarefa2.setDataCriacao(LocalDateTime.now());
-        tarefa2.setConcluida(false);
+        Tarefa tarefa2 = new TarefaBuilder().nome("Teste2")
+                .descricao("Text2")
+                .build();
+
         List<Tarefa> tarefasList = List.of(tarefa, tarefa2);
 
         List<TarefaResponse> responseList = mapper.tarefaResponseList(tarefasList);
