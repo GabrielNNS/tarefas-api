@@ -4,6 +4,7 @@ import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.model.Tarefa;
 import com.gabriel.tarefas_api.model.TarefaBuilder;
+import com.gabriel.tarefas_api.model.TarefaStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class TarefaMapperTest {
         assertNotNull(tarefa);
         assertEquals("Teste1", tarefa.getNome());
         assertEquals("Vai dar bom", tarefa.getDescricao());
-        assertEquals(false, tarefa.getConcluida());
+        assertEquals(TarefaStatus.TO_DO, tarefa.getStatus());
     }
 
     @Test
@@ -41,7 +42,7 @@ public class TarefaMapperTest {
         assertEquals(tarefa.getNome(), tarefaResponse.nome());
         assertEquals(tarefa.getDescricao(), tarefaResponse.descricao());
         assertEquals(tarefa.getDataCriacao(), tarefaResponse.dataCriacao());
-        assertEquals(tarefa.getConcluida(), tarefaResponse.concluida());
+        assertEquals(tarefa.getStatus(), tarefaResponse.status());
     }
 
     @Test
