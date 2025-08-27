@@ -2,6 +2,7 @@ package com.gabriel.tarefas_api.controller;
 
 import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
+import com.gabriel.tarefas_api.model.TarefaStatus;
 import com.gabriel.tarefas_api.service.ITarefaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,8 @@ public class TarefaController {
     }
 
     @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.alternarConclusao(id));
+    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id,
+                                                    @RequestParam TarefaStatus novoStatus) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.alternarConclusao(id, novoStatus));
     }
 }
