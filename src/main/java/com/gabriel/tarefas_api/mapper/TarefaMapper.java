@@ -21,7 +21,7 @@ public class TarefaMapper {
         return new TarefaResponse(tarefa.getId(),
                 tarefa.getNome(),
                 tarefa.getDescricao(),
-                tarefa.getConcluida(),
+                tarefa.getStatus(),
                 tarefa.getDataCriacao());
     }
 

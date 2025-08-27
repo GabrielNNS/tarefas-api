@@ -4,6 +4,7 @@ import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.mapper.TarefaMapper;
 import com.gabriel.tarefas_api.model.Tarefa;
+import com.gabriel.tarefas_api.model.TarefaStatus;
 import com.gabriel.tarefas_api.repository.TarefaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -59,10 +60,11 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public TarefaResponse alternarConclusao(Long id){
+    public TarefaResponse alternarConclusao(Long id, TarefaStatus novoStatus){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
-        tarefa.setConcluida(!tarefa.getConcluida());
+
+        tarefa.setStatus(novoStatus);
         repository.save(tarefa);
         return mapper.toTarefaResponse(tarefa);
     }
