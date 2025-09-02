@@ -12,17 +12,17 @@ import java.util.List;
 public class TarefaMapper {
 
     public Tarefa toEntity(TarefaRequest dto) {
-        return new TarefaBuilder().nome(dto.nome())
-                .descricao(dto.descricao())
+        return new TarefaBuilder().name(dto.name())
+                .description(dto.description())
                 .build();
     }
 
     public TarefaResponse toTarefaResponse(Tarefa tarefa) {
         return new TarefaResponse(tarefa.getId(),
-                tarefa.getNome(),
-                tarefa.getDescricao(),
+                tarefa.getName(),
+                tarefa.getDescription(),
                 tarefa.getStatus(),
-                tarefa.getDataCriacao());
+                tarefa.getCreateDate());
     }
 
     public List<TarefaResponse> tarefaResponseList(List<Tarefa> tarefas) {

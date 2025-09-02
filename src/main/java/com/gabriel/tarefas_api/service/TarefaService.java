@@ -12,47 +12,47 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TarefaServiceImpl implements ITarefaService {
+public class TarefaService implements ITarefaService {
 
     private final TarefaMapper mapper;
     private final TarefaRepository repository;
 
-    public TarefaServiceImpl (TarefaMapper mapper, TarefaRepository repository){
+    public TarefaService(TarefaMapper mapper, TarefaRepository repository){
         this.mapper = mapper;
         this.repository = repository;
     }
 
     @Override
-    public TarefaResponse criarTarefa(TarefaRequest dto){
+    public TarefaResponse create(TarefaRequest dto){
         Tarefa tarefa = mapper.toEntity(dto);
         repository.save(tarefa);
         return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
-    public List<TarefaResponse> listar(){
+    public List<TarefaResponse> listAll(){
         return mapper.tarefaResponseList(repository.findAll());
     }
 
     @Override
-    public TarefaResponse buscarPorId(Long id){
+    public TarefaResponse findById(Long id){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
         return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
-    public TarefaResponse atualizar(Long id, TarefaRequest dto){
+    public TarefaResponse update(Long id, TarefaRequest dto){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
-        tarefa.setNome(dto.nome());
-        tarefa.setDescricao(dto.descricao());
+        tarefa.setName(dto.name());
+        tarefa.setDescription(dto.description());
         repository.save(tarefa);
         return mapper.toTarefaResponse(tarefa);
     }
 
     @Override
-    public void deletar(Long id){
+    public void delete(Long id){
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException("Tarefa não localizada!");
         }
@@ -60,11 +60,11 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public TarefaResponse alternarConclusao(Long id, TarefaStatus novoStatus){
+    public TarefaResponse alterStatus(Long id, TarefaStatus newStatus){
         Tarefa tarefa = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
 
-        tarefa.setStatus(novoStatus);
+        tarefa.setStatus(newStatus);
         repository.save(tarefa);
         return mapper.toTarefaResponse(tarefa);
     }
