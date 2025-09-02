@@ -7,7 +7,6 @@ import com.gabriel.tarefas_api.model.TarefaBuilder;
 import com.gabriel.tarefas_api.model.TarefaStatus;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,35 +23,35 @@ public class TarefaMapperTest {
         Tarefa tarefa = mapper.toEntity(tarefaRequest);
 
         assertNotNull(tarefa);
-        assertEquals("Teste1", tarefa.getNome());
-        assertEquals("Vai dar bom", tarefa.getDescricao());
+        assertEquals("Teste1", tarefa.getName());
+        assertEquals("Vai dar bom", tarefa.getDescription());
         assertEquals(TarefaStatus.TO_DO, tarefa.getStatus());
     }
 
     @Test
     public void toTarefaResponseTest() {
-        Tarefa tarefa = new TarefaBuilder().nome("Teste2")
-                .descricao("Text")
+        Tarefa tarefa = new TarefaBuilder().name("Teste2")
+                .description("Text")
                 .build();
 
         TarefaResponse tarefaResponse = mapper.toTarefaResponse(tarefa);
 
         assertNotNull(tarefaResponse);
         assertEquals(tarefa.getId(), tarefaResponse.id());
-        assertEquals(tarefa.getNome(), tarefaResponse.nome());
-        assertEquals(tarefa.getDescricao(), tarefaResponse.descricao());
-        assertEquals(tarefa.getDataCriacao(), tarefaResponse.dataCriacao());
+        assertEquals(tarefa.getName(), tarefaResponse.name());
+        assertEquals(tarefa.getDescription(), tarefaResponse.description());
+        assertEquals(tarefa.getCreateDate(), tarefaResponse.createDate());
         assertEquals(tarefa.getStatus(), tarefaResponse.status());
     }
 
     @Test
     public void tarefaResponseListTest() {
-        Tarefa tarefa = new TarefaBuilder().nome("Teste2")
-                .descricao("Text")
+        Tarefa tarefa = new TarefaBuilder().name("Teste2")
+                .description("Text")
                 .build();
 
-        Tarefa tarefa2 = new TarefaBuilder().nome("Teste2")
-                .descricao("Text2")
+        Tarefa tarefa2 = new TarefaBuilder().name("Teste2")
+                .description("Text2")
                 .build();
 
         List<Tarefa> tarefasList = List.of(tarefa, tarefa2);

@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface ITarefaService {
 
-    TarefaResponse criarTarefa(TarefaRequest dto);
-    List<TarefaResponse> listar();
-    TarefaResponse buscarPorId(Long id);
-    TarefaResponse atualizar(Long id, TarefaRequest dto);
-    void deletar(Long id);
-    TarefaResponse alternarConclusao(Long id, TarefaStatus novoStatus);
+    TarefaResponse create(TarefaRequest dto);
+    List<TarefaResponse> listAll();
+    TarefaResponse findById(Long id);
+    TarefaResponse update(Long id, TarefaRequest dto);
+    void delete(Long id);
+    TarefaResponse alterStatus(Long id, TarefaStatus newStatus);
 }

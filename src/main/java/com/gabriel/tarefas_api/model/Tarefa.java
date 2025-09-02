@@ -21,17 +21,17 @@ public class Tarefa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
-    private String descricao;
-    private LocalDateTime dataCriacao;
+    private String name;
+    private String description;
+    private LocalDateTime createDate;
 
     @Enumerated(EnumType.STRING)
     private TarefaStatus status;
 
     public Tarefa(TarefaBuilder tarefaBuilder) {
-        this.nome = tarefaBuilder.getNome();
-        this.descricao = tarefaBuilder.getDescricao();
+        this.name = tarefaBuilder.getName();
+        this.description = tarefaBuilder.getDescription();
         this.status = TO_DO;
-        this.dataCriacao = LocalDateTime.now();
+        this.createDate = LocalDateTime.now();
     }
 }

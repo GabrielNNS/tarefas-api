@@ -5,16 +5,16 @@ import lombok.Getter;
 @Getter
 public class TarefaBuilder {
 
-    private String nome;
-    private String descricao;
+    private String name;
+    private String description;
 
-    public TarefaBuilder nome(String nome) {
-        this.nome = nome;
+    public TarefaBuilder name(String name) {
+        this.name = name;
         return this;
     }
 
-    public TarefaBuilder descricao(String descricao) {
-        this.descricao = descricao;
+    public TarefaBuilder description(String description) {
+        this.description = description;
         return this;
     }
 

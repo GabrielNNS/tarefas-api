@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record TarefaRequest(
         @NotBlank
-        String nome,
+        String name,
         @NotBlank
-        String descricao) {
+        String description) {
 }

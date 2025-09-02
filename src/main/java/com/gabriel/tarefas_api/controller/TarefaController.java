@@ -22,34 +22,34 @@ public class TarefaController {
     }
 
     @PostMapping
-    public ResponseEntity<TarefaResponse> criar(@RequestBody @Valid TarefaRequest dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarTarefa(dto));
+    public ResponseEntity<TarefaResponse> create(@RequestBody @Valid TarefaRequest dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<TarefaResponse>> listar() {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.listar());
+    public ResponseEntity<List<TarefaResponse>> listAll() {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.listAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TarefaResponse> buscarId(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.buscarPorId(id));
+    public ResponseEntity<TarefaResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id, @RequestBody @Valid TarefaRequest dto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.atualizar(id, dto));
+    public ResponseEntity<TarefaResponse> update(@PathVariable Long id, @RequestBody @Valid TarefaRequest dto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<TarefaResponse> atualizar(@PathVariable Long id,
-                                                    @RequestParam TarefaStatus novoStatus) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.alternarConclusao(id, novoStatus));
+    public ResponseEntity<TarefaResponse> alterStatus(@PathVariable Long id,
+                                                      @RequestParam TarefaStatus newStatus) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.alterStatus(id, newStatus));
     }
 }
