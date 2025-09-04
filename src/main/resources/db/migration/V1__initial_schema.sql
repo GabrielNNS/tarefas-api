@@ -1,6 +1,6 @@
 CREATE TABLE tarefa (
     id BIGSERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    descricao VARCHAR(255),
-    concluida BOOLEAN DEFAULT FALSE
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    completed BOOLEAN DEFAULT FALSE
 );

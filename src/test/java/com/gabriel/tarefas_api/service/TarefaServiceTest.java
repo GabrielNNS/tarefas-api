@@ -4,7 +4,6 @@ import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.mapper.TarefaMapper;
 import com.gabriel.tarefas_api.model.Tarefa;
-import com.gabriel.tarefas_api.model.TarefaBuilder;
 import com.gabriel.tarefas_api.model.TarefaStatus;
 import com.gabriel.tarefas_api.repository.TarefaRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -39,7 +38,8 @@ public class TarefaServiceTest {
     public void createTarefaSuccess() {
         TarefaRequest request = new TarefaRequest("Test Mock", "Agora vai");
 
-        Tarefa tarefa = new TarefaBuilder().name("Test Mock")
+        Tarefa tarefa = Tarefa.builder()
+                .name("Test Mock")
                 .description("Agora vai")
                 .build();
 
@@ -62,11 +62,13 @@ public class TarefaServiceTest {
 
     @Test
     public void listAllTarefas() {
-        Tarefa tarefa = new TarefaBuilder().name("Test Mock")
+        Tarefa tarefa = Tarefa.builder()
+                .name("Test Mock")
                 .description("Agora vai")
                 .build();
 
-        Tarefa tarefa2 = new TarefaBuilder().name("Testando")
+        Tarefa tarefa2 = Tarefa.builder()
+                .name("Testando")
                 .description("Agora vai 2")
                 .build();
 
@@ -100,7 +102,8 @@ public class TarefaServiceTest {
 
     @Test
     public void findTarefaById() {
-        Tarefa tarefa = new TarefaBuilder().name("Test Mock")
+        Tarefa tarefa = Tarefa.builder()
+                .name("Test Mock")
                 .description("Agora vai")
                 .build();
 
@@ -132,11 +135,13 @@ public class TarefaServiceTest {
         TarefaRequest request = new TarefaRequest("Tarefa Nova",
                 "Desc Nova");
 
-        Tarefa currentTarefa = new Tarefa(1L,
-                "Tarefa atual",
-                "Desc atual",
-                LocalDateTime.now(),
-                TarefaStatus.TO_DO);
+        Tarefa currentTarefa = Tarefa.builder()
+                .id(1L)
+                .name("Tarefa atual")
+                .description("Desc atual")
+                .createDate(LocalDateTime.now())
+                .status(TarefaStatus.TO_DO)
+                .build();
 
         TarefaResponse newTarefaResponse = new TarefaResponse(1L,
                 "Tarefa Nova",
@@ -158,7 +163,7 @@ public class TarefaServiceTest {
     }
 
     @Test
-    public void deletedTarefaSucess() {
+    public void deletedTarefaSuccess() {
         when(repository.existsById(1L)).thenReturn(true);
 
         service.delete(1L);
@@ -176,11 +181,13 @@ public class TarefaServiceTest {
 
     @Test
     public void alterStatusSuccess() {
-        Tarefa currentTarefa = new Tarefa(1L,
-                "Tarefa atual",
-                "Desc atual",
-                LocalDateTime.now(),
-                TarefaStatus.TO_DO);
+        Tarefa currentTarefa = Tarefa.builder()
+                .id(1L)
+                .name("Tarefa atual")
+                .description("Desc atual")
+                .createDate(LocalDateTime.now())
+                .status(TarefaStatus.TO_DO)
+                .build();
 
         TarefaResponse newTarefaResponse = new TarefaResponse(1L,
                 "Tarefa alter",

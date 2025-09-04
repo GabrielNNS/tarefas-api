@@ -4,9 +4,9 @@ ALTER TABLE tarefa
 
 UPDATE tarefa
 SET status = CASE
-    WHEN concluida = TRUE THEN 'DONE'
+    WHEN completed = TRUE THEN 'DONE'
     ELSE 'TO_DO'
 END;
 
 ALTER TABLE tarefa
-    DROP COLUMN concluida;
+    DROP COLUMN completed;
