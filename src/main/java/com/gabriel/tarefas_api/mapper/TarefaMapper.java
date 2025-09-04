@@ -3,7 +3,6 @@ package com.gabriel.tarefas_api.mapper;
 import com.gabriel.tarefas_api.dto.TarefaRequest;
 import com.gabriel.tarefas_api.dto.TarefaResponse;
 import com.gabriel.tarefas_api.model.Tarefa;
-import com.gabriel.tarefas_api.model.TarefaBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +11,8 @@ import java.util.List;
 public class TarefaMapper {
 
     public Tarefa toEntity(TarefaRequest dto) {
-        return new TarefaBuilder().name(dto.name())
+        return Tarefa.builder()
+                .name(dto.name())
                 .description(dto.description())
                 .build();
     }

@@ -1,10 +1,7 @@
 package com.gabriel.tarefas_api.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +12,7 @@ import static com.gabriel.tarefas_api.model.TarefaStatus.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Tarefa {
 
     @Id
@@ -23,15 +21,11 @@ public class Tarefa {
 
     private String name;
     private String description;
-    private LocalDateTime createDate;
 
+    @Builder.Default
+    private LocalDateTime createDate = LocalDateTime.now();
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private TarefaStatus status;
-
-    public Tarefa(TarefaBuilder tarefaBuilder) {
-        this.name = tarefaBuilder.getName();
-        this.description = tarefaBuilder.getDescription();
-        this.status = TO_DO;
-        this.createDate = LocalDateTime.now();
-    }
+    private TarefaStatus status = TO_DO;
 }
