@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class TarefasApiApplicationTests {
+class TaskApiApplicationTests {
 
 	@Test
 	void contextLoads() {

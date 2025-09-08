@@ -1,11 +1,11 @@
 package com.gabriel.tarefas_api.service;
 
-import com.gabriel.tarefas_api.dto.TarefaRequest;
-import com.gabriel.tarefas_api.dto.TarefaResponse;
-import com.gabriel.tarefas_api.mapper.TarefaMapper;
-import com.gabriel.tarefas_api.model.Tarefa;
-import com.gabriel.tarefas_api.model.TarefaStatus;
-import com.gabriel.tarefas_api.repository.TarefaRepository;
+import com.gabriel.tarefas_api.dto.TaskRequest;
+import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.mapper.TaskMapper;
+import com.gabriel.tarefas_api.model.Task;
+import com.gabriel.tarefas_api.model.TaskStatus;
+import com.gabriel.tarefas_api.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,75 +23,74 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TarefaServiceTest {
+public class TaskServiceTest {
 
     @Mock
-    private TarefaRepository repository;
+    private TaskRepository repository;
 
     @Mock
-    private TarefaMapper mapper;
+    private TaskMapper mapper;
 
     @InjectMocks
-    private TarefaService service;
+    private TaskService service;
+
+    private static final Long ID = 1L;
+    private static final String NAME = "Test Mock";
+    private static final String DESCRIPTION = "Agora vai";
+    private static final TaskStatus STATUS = TaskStatus.TO_DO;
+    private static final LocalDateTime DATE = LocalDateTime.now();
 
     @Test
-    public void createTarefaSuccess() {
-        TarefaRequest request = new TarefaRequest("Test Mock", "Agora vai");
-
-        Tarefa tarefa = Tarefa.builder()
-                .name("Test Mock")
-                .description("Agora vai")
+    public void givenValidTaskRequestThenSaveEntityAndReturnTaskResponse() {
+        TaskRequest request = new TaskRequest(NAME, DESCRIPTION);
+        Task task = Task.builder()
+                .name(NAME)
+                .description(DESCRIPTION)
                 .build();
+        TaskResponse response = new TaskResponse(ID, NAME, DESCRIPTION, STATUS, DATE);
 
-        TarefaResponse response = new TarefaResponse(1L,
-                "Test Mock",
-                "Agora vai",
-                TarefaStatus.TO_DO,
-                LocalDateTime.now());
+        when(mapper.toEntity(request)).thenReturn(task);
+        when(mapper.toTarefaResponse(task)).thenReturn(response);
 
-        when(mapper.toEntity(request)).thenReturn(tarefa);
-        when(mapper.toTarefaResponse(tarefa)).thenReturn(response);
-        when(repository.save(any(Tarefa.class))).thenReturn(tarefa);
+        TaskResponse result = service.create(request);
 
-        TarefaResponse result = service.create(request);
-
-        assertNotNull(result);
-        assertEquals("Test Mock", result.name());
-        verify(repository).save(any(Tarefa.class));
+        assertEquals(request.name(), result.name());
+        assertEquals(request.description(), result.description());
+        verify(repository).save(any(Task.class));
     }
 
     @Test
     public void listAllTarefas() {
-        Tarefa tarefa = Tarefa.builder()
+        Task task = Task.builder()
                 .name("Test Mock")
                 .description("Agora vai")
                 .build();
 
-        Tarefa tarefa2 = Tarefa.builder()
+        Task task2 = Task.builder()
                 .name("Testando")
                 .description("Agora vai 2")
                 .build();
 
-        TarefaResponse response = new TarefaResponse(1L,
+        TaskResponse response = new TaskResponse(1L,
                 "Test Mock",
                 "Agora vai",
-                TarefaStatus.TO_DO,
+                TaskStatus.TO_DO,
                 LocalDateTime.now());
 
-        TarefaResponse response2 = new TarefaResponse(2L,
+        TaskResponse response2 = new TaskResponse(2L,
                 "Testando",
                 "Agora vai 2",
-                TarefaStatus.TO_DO,
+                TaskStatus.TO_DO,
                 LocalDateTime.now());
 
-        List<Tarefa> entities = List.of(tarefa, tarefa2);
-        List<TarefaResponse> responses = List.of(response, response2);
+        List<Task> entities = List.of(task, task2);
+        List<TaskResponse> responses = List.of(response, response2);
 
         when(repository.findAll()).thenReturn(entities);
         when(mapper.tarefaResponseList(entities)).thenReturn(responses);
 
 
-        List<TarefaResponse> results = service.listAll();
+        List<TaskResponse> results = service.listAll();
 
         assertNotNull(results);
         assertEquals(2, results.size());
@@ -102,21 +101,21 @@ public class TarefaServiceTest {
 
     @Test
     public void findTarefaById() {
-        Tarefa tarefa = Tarefa.builder()
+        Task task = Task.builder()
                 .name("Test Mock")
                 .description("Agora vai")
                 .build();
 
-        TarefaResponse response = new TarefaResponse(1L,
+        TaskResponse response = new TaskResponse(1L,
                 "Test Mock",
                 "Agora vai",
-                TarefaStatus.TO_DO,
+                TaskStatus.TO_DO,
                 LocalDateTime.now());
 
-        when(repository.findById(1L)).thenReturn(Optional.of(tarefa));
-        when(mapper.toTarefaResponse(tarefa)).thenReturn(response);
+        when(repository.findById(1L)).thenReturn(Optional.of(task));
+        when(mapper.toTarefaResponse(task)).thenReturn(response);
 
-        TarefaResponse result = service.findById(1L);
+        TaskResponse result = service.findById(1L);
 
         assertNotNull(result);
         assertEquals(1L, result.id());
@@ -132,34 +131,34 @@ public class TarefaServiceTest {
 
     @Test
     public void updatedNameAndDescriptionTarefa() {
-        TarefaRequest request = new TarefaRequest("Tarefa Nova",
+        TaskRequest request = new TaskRequest("Tarefa Nova",
                 "Desc Nova");
 
-        Tarefa currentTarefa = Tarefa.builder()
+        Task currentTask = Task.builder()
                 .id(1L)
                 .name("Tarefa atual")
                 .description("Desc atual")
                 .createDate(LocalDateTime.now())
-                .status(TarefaStatus.TO_DO)
+                .status(TaskStatus.TO_DO)
                 .build();
 
-        TarefaResponse newTarefaResponse = new TarefaResponse(1L,
+        TaskResponse newTaskResponse = new TaskResponse(1L,
                 "Tarefa Nova",
                 "Desc Nova",
-                TarefaStatus.TO_DO,
+                TaskStatus.TO_DO,
                 LocalDateTime.now());
 
-        when(repository.findById(1L)).thenReturn(Optional.of(currentTarefa));
-        when(repository.save(currentTarefa)).thenReturn(currentTarefa);
-        when(mapper.toTarefaResponse(currentTarefa)).thenReturn(newTarefaResponse);
+        when(repository.findById(1L)).thenReturn(Optional.of(currentTask));
+        when(repository.save(currentTask)).thenReturn(currentTask);
+        when(mapper.toTarefaResponse(currentTask)).thenReturn(newTaskResponse);
 
-        TarefaResponse result = service.update(1L, request);
+        TaskResponse result = service.update(1L, request);
 
         assertNotNull(result);
         assertEquals("Tarefa Nova", result.name());
         assertEquals("Desc Nova", result.description());
         verify(repository).findById(1L);
-        verify(repository).save(any(Tarefa.class));
+        verify(repository).save(any(Task.class));
     }
 
     @Test
@@ -181,29 +180,29 @@ public class TarefaServiceTest {
 
     @Test
     public void alterStatusSuccess() {
-        Tarefa currentTarefa = Tarefa.builder()
+        Task currentTask = Task.builder()
                 .id(1L)
                 .name("Tarefa atual")
                 .description("Desc atual")
                 .createDate(LocalDateTime.now())
-                .status(TarefaStatus.TO_DO)
+                .status(TaskStatus.TO_DO)
                 .build();
 
-        TarefaResponse newTarefaResponse = new TarefaResponse(1L,
+        TaskResponse newTaskResponse = new TaskResponse(1L,
                 "Tarefa alter",
                 "Desc alter",
-                TarefaStatus.DOING,
+                TaskStatus.DOING,
                 LocalDateTime.now());
 
-        when(repository.findById(1L)).thenReturn(Optional.of(currentTarefa));
-        when(repository.save(currentTarefa)).thenReturn(currentTarefa);
-        when(mapper.toTarefaResponse(currentTarefa)).thenReturn(newTarefaResponse);
+        when(repository.findById(1L)).thenReturn(Optional.of(currentTask));
+        when(repository.save(currentTask)).thenReturn(currentTask);
+        when(mapper.toTarefaResponse(currentTask)).thenReturn(newTaskResponse);
 
-        TarefaResponse result = service.alterStatus(1L, TarefaStatus.DOING);
+        TaskResponse result = service.alterStatus(1L, TaskStatus.DOING);
 
         assertNotNull(result);
-        assertEquals(TarefaStatus.DOING, result.status());
+        assertEquals(TaskStatus.DOING, result.status());
         verify(repository).findById(1L);
-        verify(repository).save(any(Tarefa.class));
+        verify(repository).save(any(Task.class));
     }
 }

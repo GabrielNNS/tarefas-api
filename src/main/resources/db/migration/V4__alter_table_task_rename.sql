@@ -1,0 +1,1 @@
+ALTER TABLE tarefa RENAME to task;

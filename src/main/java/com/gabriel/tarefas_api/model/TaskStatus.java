@@ -1,6 +1,6 @@
 package com.gabriel.tarefas_api.model;
 
-public enum TarefaStatus {
+public enum TaskStatus {
     TO_DO,
     DOING,
     DONE

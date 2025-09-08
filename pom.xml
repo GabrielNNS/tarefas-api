@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gabriel</groupId>
-	<artifactId>tarefas-api</artifactId>
+	<artifactId>tasks-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tarefas-api</name>
+	<name>tasks-api</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

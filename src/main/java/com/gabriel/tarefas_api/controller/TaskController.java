@@ -1,9 +1,9 @@
 package com.gabriel.tarefas_api.controller;
 
-import com.gabriel.tarefas_api.dto.TarefaRequest;
-import com.gabriel.tarefas_api.dto.TarefaResponse;
-import com.gabriel.tarefas_api.model.TarefaStatus;
-import com.gabriel.tarefas_api.service.ITarefaService;
+import com.gabriel.tarefas_api.dto.TaskRequest;
+import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.model.TaskStatus;
+import com.gabriel.tarefas_api.service.ITaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,31 +13,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tarefas")
-public class TarefaController {
+public class TaskController {
 
-    private final ITarefaService service;
+    private final ITaskService service;
 
-    public TarefaController(ITarefaService service){
+    public TaskController(ITaskService service){
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<TarefaResponse> create(@RequestBody @Valid TarefaRequest dto) {
+    public ResponseEntity<TaskResponse> create(@RequestBody @Valid TaskRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<TarefaResponse>> listAll() {
+    public ResponseEntity<List<TaskResponse>> listAll() {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.listAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TarefaResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponse> findById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TarefaResponse> update(@PathVariable Long id, @RequestBody @Valid TarefaRequest dto) {
+    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @RequestBody @Valid TaskRequest dto) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.update(id, dto));
     }
 
@@ -48,8 +48,8 @@ public class TarefaController {
     }
 
     @PatchMapping("/{id}/alterarStatus")
-    public ResponseEntity<TarefaResponse> alterStatus(@PathVariable Long id,
-                                                      @RequestParam TarefaStatus newStatus) {
+    public ResponseEntity<TaskResponse> alterStatus(@PathVariable Long id,
+                                                    @RequestParam TaskStatus newStatus) {
         return ResponseEntity.status(HttpStatus.OK).body(service.alterStatus(id, newStatus));
     }
 }
