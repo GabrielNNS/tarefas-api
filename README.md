@@ -1,6 +1,6 @@
 # 📌 Tarefas API
 
-API RESTful para gerenciamento de tarefas, desenvolvida com Spring Boot. Permite criar, listar, atualizar e deletar tarefas (CRUD).
+API RESTful para gerenciamento de tasks, desenvolvida com Spring Boot. Permite criar, listar, atualizar e deletar tasks (CRUD).
 
 ---
 
@@ -23,11 +23,11 @@ API RESTful para gerenciamento de tarefas, desenvolvida com Spring Boot. Permite
 
 | Método | Rota             | Descrição               |
 |--------|------------------|-------------------------|
-| GET    | `/tarefas`       | Lista todas as tarefas |
-| GET    | `/tarefas/{id}`  | Busca uma tarefa por ID |
-| POST   | `/tarefas`       | Cria uma nova tarefa    |
-| PUT    | `/tarefas/{id}`  | Atualiza uma tarefa     |
-| DELETE | `/tarefas/{id}`  | Remove uma tarefa       |
+| GET    | `/tasks`       | Lista todas as tasks |
+| GET    | `/tasks/{id}`  | Busca uma task por ID |
+| POST   | `/tasks`       | Cria uma nova task    |
+| PUT    | `/tasks/{id}`  | Atualiza uma task     |
+| DELETE | `/tasks/{id}`  | Remove uma task       |
 
 ---
 

@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-import static com.gabriel.tarefas_api.model.TarefaStatus.*;
+import static com.gabriel.tarefas_api.model.TaskStatus.*;
 
 @Entity
 @AllArgsConstructor
@@ -13,7 +13,7 @@ import static com.gabriel.tarefas_api.model.TarefaStatus.*;
 @Getter
 @Setter
 @Builder
-public class Tarefa {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +27,5 @@ public class Tarefa {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private TarefaStatus status = TO_DO;
+    private TaskStatus status = TO_DO;
 }
