@@ -36,15 +36,12 @@ public class TaskService implements ITaskService {
 
     @Override
     public TaskResponse findById(Long id){
-        Task task = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
-        return mapper.toTarefaResponse(task);
+        return mapper.toTarefaResponse(getUserOrThrow(id));
     }
 
     @Override
     public TaskResponse update(Long id, TaskRequest dto){
-        Task task = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
+        Task task = getUserOrThrow(id);
         task.setName(dto.name());
         task.setDescription(dto.description());
         repository.save(task);
@@ -54,18 +51,21 @@ public class TaskService implements ITaskService {
     @Override
     public void delete(Long id){
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Tarefa não localizada!");
+            throw new EntityNotFoundException("O id " + id + " não existe!");
         }
         repository.deleteById(id);
     }
 
     @Override
     public TaskResponse alterStatus(Long id, TaskStatus newStatus){
-        Task task = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Tarefa não localizada!"));
-
+        Task task = getUserOrThrow(id);
         task.setStatus(newStatus);
         repository.save(task);
         return mapper.toTarefaResponse(task);
+    }
+
+    private Task getUserOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("O id " + id + " não existe!!"));
     }
 }
