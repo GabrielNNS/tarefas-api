@@ -7,6 +7,7 @@ import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,135 +36,126 @@ public class TaskServiceTest {
     @InjectMocks
     private TaskService service;
 
-    private static final Long ID = 1L;
-    private static final String NAME = "Test Mock";
-    private static final String DESCRIPTION = "Agora vai";
-    private static final TaskStatus STATUS = TaskStatus.TO_DO;
-    private static final LocalDateTime DATE = LocalDateTime.now();
+    private Task taskTest;
+    private TaskRequest taskRequestTest;
+    private TaskResponse taskResponseTest;
+
+    private static final LocalDateTime FIXED_DATE = LocalDateTime.of(2025, 1, 1, 12, 0);
+
+    @BeforeEach
+    public void setUp() {
+        taskRequestTest = new TaskRequest("Test", "Desc");
+        taskTest = Task.builder()
+                .name("Test")
+                .description("Desc")
+                .createDate(FIXED_DATE)
+                .build();
+        taskResponseTest = TaskResponse.builder()
+                .id(1L)
+                .name("Test")
+                .description("Desc")
+                .status(TaskStatus.TO_DO)
+                .createDate(FIXED_DATE)
+                .build();
+    }
 
     @Test
-    public void givenValidTaskRequestThenSaveEntityAndReturnTaskResponse() {
-        TaskRequest request = new TaskRequest(NAME, DESCRIPTION);
-        Task task = Task.builder()
-                .name(NAME)
-                .description(DESCRIPTION)
-                .build();
-        TaskResponse response = new TaskResponse(ID, NAME, DESCRIPTION, STATUS, DATE);
+    public void shouldReturnTaskResponseAndCreateTaskWhenTaskRequestIsValid() {
+        when(mapper.toEntity(any(TaskRequest.class))).thenReturn(taskTest);
+        when(mapper.toTarefaResponse(any(Task.class))).thenReturn(taskResponseTest);
 
-        when(mapper.toEntity(request)).thenReturn(task);
-        when(mapper.toTarefaResponse(task)).thenReturn(response);
+        TaskResponse result = service.create(taskRequestTest);
 
-        TaskResponse result = service.create(request);
-
-        assertEquals(request.name(), result.name());
-        assertEquals(request.description(), result.description());
+        assertNotNull(result);
+        assertEquals(taskRequestTest.name(), result.name());
+        assertEquals(taskRequestTest.description(), result.description());
         verify(repository).save(any(Task.class));
     }
 
     @Test
-    public void listAllTarefas() {
-        Task task = Task.builder()
-                .name("Test Mock")
-                .description("Agora vai")
+    public void shouldReturnAllTasks() {
+        Task taskTest2 = Task.builder()
+                .name("Test 2")
+                .description("Desc 2")
+                .createDate(FIXED_DATE)
                 .build();
 
-        Task task2 = Task.builder()
-                .name("Testando")
-                .description("Agora vai 2")
-                .build();
-
-        TaskResponse response = new TaskResponse(1L,
-                "Test Mock",
-                "Agora vai",
+        TaskResponse taskResponseTest2 = new TaskResponse(2L,
+                "Test 2",
+                "Desc 2",
                 TaskStatus.TO_DO,
-                LocalDateTime.now());
+                FIXED_DATE);
 
-        TaskResponse response2 = new TaskResponse(2L,
-                "Testando",
-                "Agora vai 2",
-                TaskStatus.TO_DO,
-                LocalDateTime.now());
+        List<Task> tasks = List.of(taskTest, taskTest2);
+        List<TaskResponse> responses = List.of(taskResponseTest, taskResponseTest2);
 
-        List<Task> entities = List.of(task, task2);
-        List<TaskResponse> responses = List.of(response, response2);
-
-        when(repository.findAll()).thenReturn(entities);
-        when(mapper.tarefaResponseList(entities)).thenReturn(responses);
-
+        when(repository.findAll()).thenReturn(tasks);
+        when(mapper.tarefaResponseList(tasks)).thenReturn(responses);
 
         List<TaskResponse> results = service.listAll();
 
         assertNotNull(results);
         assertEquals(2, results.size());
-        assertEquals("Test Mock", results.get(0).name());
-        assertEquals("Testando", results.get(1).name());
+        assertEquals("Test", results.get(0).name());
+        assertEquals("Test 2", results.get(1).name());
         verify(repository).findAll();
     }
 
     @Test
-    public void findTarefaById() {
-        Task task = Task.builder()
-                .name("Test Mock")
-                .description("Agora vai")
-                .build();
+    public void shouldReturnEmptyListOfTasksWhenTaskNotExists() {
+        List<Task> tasks = new ArrayList<>();
 
-        TaskResponse response = new TaskResponse(1L,
-                "Test Mock",
-                "Agora vai",
-                TaskStatus.TO_DO,
-                LocalDateTime.now());
+        when(repository.findAll()).thenReturn(tasks);
 
-        when(repository.findById(1L)).thenReturn(Optional.of(task));
-        when(mapper.toTarefaResponse(task)).thenReturn(response);
+        List<TaskResponse> results = service.listAll();
+
+        assertEquals(0, results.size());
+        verify(repository).findAll();
+    }
+
+    @Test
+    public void shouldReturnTaskWhenIdIsValid() {
+        when(repository.findById(1L)).thenReturn(Optional.of(taskTest));
+        when(mapper.toTarefaResponse(taskTest)).thenReturn(taskResponseTest);
 
         TaskResponse result = service.findById(1L);
 
         assertNotNull(result);
         assertEquals(1L, result.id());
+        assertEquals("Test", result.name());
         verify(repository).findById(1L);
     }
 
     @Test
-    public void findByIdThrowsExceptionEntityNotFound() {
+    public void shouldThrowExceptionEntityNotFoundWhenTaskIdInvalid() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> service.findById(1L));
     }
 
     @Test
-    public void updatedNameAndDescriptionTarefa() {
-        TaskRequest request = new TaskRequest("Tarefa Nova",
-                "Desc Nova");
-
-        Task currentTask = Task.builder()
-                .id(1L)
-                .name("Tarefa atual")
-                .description("Desc atual")
-                .createDate(LocalDateTime.now())
+    public void shouldSaveAndReturnTaskResponseWhenTaskRequestIdAndTaskRequestIsValid() {
+        TaskResponse newTaskResponse = TaskResponse.builder()
+                .name("New Test")
+                .description("New Desc")
                 .status(TaskStatus.TO_DO)
+                .createDate(FIXED_DATE)
                 .build();
 
-        TaskResponse newTaskResponse = new TaskResponse(1L,
-                "Tarefa Nova",
-                "Desc Nova",
-                TaskStatus.TO_DO,
-                LocalDateTime.now());
+        when(repository.findById(1L)).thenReturn(Optional.of(taskTest));
+        when(mapper.toTarefaResponse(taskTest)).thenReturn(newTaskResponse);
 
-        when(repository.findById(1L)).thenReturn(Optional.of(currentTask));
-        when(repository.save(currentTask)).thenReturn(currentTask);
-        when(mapper.toTarefaResponse(currentTask)).thenReturn(newTaskResponse);
-
-        TaskResponse result = service.update(1L, request);
+        TaskResponse result = service.update(1L, taskRequestTest);
 
         assertNotNull(result);
-        assertEquals("Tarefa Nova", result.name());
-        assertEquals("Desc Nova", result.description());
+        assertEquals("New Test", result.name());
+        assertEquals("New Desc", result.description());
         verify(repository).findById(1L);
         verify(repository).save(any(Task.class));
     }
 
     @Test
-    public void deletedTarefaSuccess() {
+    public void shouldDeleteTaskWhenIdIsValid() {
         when(repository.existsById(1L)).thenReturn(true);
 
         service.delete(1L);
@@ -172,7 +165,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void deletedTarefaThrowsEntityNotFoundException() {
+    public void shouldThrowExceptionEntityNotFoundWhenIdIsInvalid() {
         when(repository.existsById(1L)).thenReturn(false);
 
         assertThrows(EntityNotFoundException.class, () -> service.delete(1L));
@@ -180,23 +173,16 @@ public class TaskServiceTest {
 
     @Test
     public void alterStatusSuccess() {
-        Task currentTask = Task.builder()
+        TaskResponse newTaskResponse = TaskResponse.builder()
                 .id(1L)
-                .name("Tarefa atual")
-                .description("Desc atual")
-                .createDate(LocalDateTime.now())
-                .status(TaskStatus.TO_DO)
+                .name("Test")
+                .description("Desc")
+                .status(TaskStatus.DOING)
+                .createDate(FIXED_DATE)
                 .build();
 
-        TaskResponse newTaskResponse = new TaskResponse(1L,
-                "Tarefa alter",
-                "Desc alter",
-                TaskStatus.DOING,
-                LocalDateTime.now());
-
-        when(repository.findById(1L)).thenReturn(Optional.of(currentTask));
-        when(repository.save(currentTask)).thenReturn(currentTask);
-        when(mapper.toTarefaResponse(currentTask)).thenReturn(newTaskResponse);
+        when(repository.findById(1L)).thenReturn(Optional.of(taskTest));
+        when(mapper.toTarefaResponse(taskTest)).thenReturn(newTaskResponse);
 
         TaskResponse result = service.alterStatus(1L, TaskStatus.DOING);
 

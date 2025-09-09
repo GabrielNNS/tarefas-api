@@ -18,11 +18,13 @@ public class TaskMapper {
     }
 
     public TaskResponse toTarefaResponse(Task task) {
-        return new TaskResponse(task.getId(),
-                task.getName(),
-                task.getDescription(),
-                task.getStatus(),
-                task.getCreateDate());
+        return TaskResponse.builder()
+                .id(task.getId())
+                .name(task.getName())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .createDate(task.getCreateDate())
+                .build();
     }
 
     public List<TaskResponse> tarefaResponseList(List<Task> tasks) {
