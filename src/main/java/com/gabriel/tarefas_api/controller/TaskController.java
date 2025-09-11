@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tarefas")
+@RequestMapping("/tasks")
 public class TaskController {
 
     private final ITaskService service;
@@ -28,17 +28,17 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskResponse>> listAll() {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.listAll());
+        return ResponseEntity.status(HttpStatus.OK).body(service.listAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.findById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> update(@PathVariable Long id, @RequestBody @Valid TaskRequest dto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.update(id, dto));
+        return ResponseEntity.status(HttpStatus.OK).body(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -47,7 +47,7 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PatchMapping("/{id}/alterarStatus")
+    @PatchMapping("/{id}/alter-status")
     public ResponseEntity<TaskResponse> alterStatus(@PathVariable Long id,
                                                     @RequestParam TaskStatus newStatus) {
         return ResponseEntity.status(HttpStatus.OK).body(service.alterStatus(id, newStatus));
