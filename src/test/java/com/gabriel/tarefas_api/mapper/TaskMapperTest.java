@@ -5,12 +5,14 @@ import com.gabriel.tarefas_api.dto.TaskResponse;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ActiveProfiles("unit")
 public class TaskMapperTest {
 
     private final TaskMapper mapper = new TaskMapper();

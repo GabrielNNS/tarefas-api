@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleAllExcpetions (RuntimeException ex,
                                                               HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
