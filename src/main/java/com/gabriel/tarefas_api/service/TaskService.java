@@ -26,17 +26,17 @@ public class TaskService implements ITaskService {
     public TaskResponse create(TaskRequest dto){
         Task task = mapper.toEntity(dto);
         repository.save(task);
-        return mapper.toTarefaResponse(task);
+        return mapper.toTaskResponse(task);
     }
 
     @Override
     public List<TaskResponse> listAll(){
-        return mapper.tarefaResponseList(repository.findAll());
+        return mapper.taskResponseList(repository.findAll());
     }
 
     @Override
     public TaskResponse findById(Long id){
-        return mapper.toTarefaResponse(getUserOrThrow(id));
+        return mapper.toTaskResponse(getUserOrThrow(id));
     }
 
     @Override
@@ -45,14 +45,12 @@ public class TaskService implements ITaskService {
         task.setName(dto.name());
         task.setDescription(dto.description());
         repository.save(task);
-        return mapper.toTarefaResponse(task);
+        return mapper.toTaskResponse(task);
     }
 
     @Override
     public void delete(Long id){
-        if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("O id " + id + " não existe!");
-        }
+        Task task = getUserOrThrow(id);
         repository.deleteById(id);
     }
 
@@ -61,7 +59,7 @@ public class TaskService implements ITaskService {
         Task task = getUserOrThrow(id);
         task.setStatus(newStatus);
         repository.save(task);
-        return mapper.toTarefaResponse(task);
+        return mapper.toTaskResponse(task);
     }
 
     private Task getUserOrThrow(Long id) {

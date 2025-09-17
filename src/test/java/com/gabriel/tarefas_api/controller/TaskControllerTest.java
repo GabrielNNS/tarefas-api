@@ -2,10 +2,13 @@ package com.gabriel.tarefas_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.tarefas_api.dto.TaskRequest;
+import com.gabriel.tarefas_api.dto.TaskResponse;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
+import com.gabriel.tarefas_api.util.TaskFactory;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +34,18 @@ public class TaskControllerTest {
     private final ObjectMapper objectMapper;
     private final TaskRepository repository;
 
+    private TaskFactory factory;
+
+    private static final Long FIXED_ID = 1L;
+    private static final Long INVALID_ID = 99L;
+    private static final String NAME = "Task";
+    private static final String DESC = "Desc";
+
+    private Task task;
+    private TaskRequest request;
+    private TaskResponse response;
+
+
     @Autowired
     public TaskControllerTest(MockMvc mockMvc,
                               ObjectMapper objectMapper,
@@ -40,33 +55,42 @@ public class TaskControllerTest {
         this.repository = repository;
     }
 
+    @BeforeEach
+    public void setUp() {
+        factory = new TaskFactory();
+        task = factory.buildTask(NAME, DESC);
+        request = factory.buildTaskRequest(NAME, DESC);
+        response = factory.buildTaskResponse(FIXED_ID, NAME, DESC);
+    }
+
     @Test
     public void shouldCreateTaskAndReturnTaskResponseWhenHttpPostWithValidTaskRequest() throws Exception {
-        TaskRequest request = new TaskRequest("Test", "Desc");
-        String json = objectMapper.writeValueAsString(request);
+        String requestJson = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(requestJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value("Test"));
+                .andExpect(jsonPath("$.name").value(NAME))
+                .andExpect(jsonPath("$.description").value(DESC));
 
         List<Task> tasks = repository.findAll();
         Task savedTask = tasks.getFirst();
 
         assertEquals(1, tasks.size());
-        assertEquals("Test", savedTask.getName());
+        assertEquals(NAME, savedTask.getName());
+        assertEquals(DESC, savedTask.getDescription());
     }
 
     @Test
     public void shouldReturnBadRequestAndErrorResponseWhenHttpPostWithInvalidTaskRequest() throws Exception {
-        TaskRequest request = new TaskRequest("", "Desc");
-        String json = objectMapper.writeValueAsString(request);
+        TaskRequest invalidRequest = factory.buildTaskRequest("", DESC);
+        String requestJson = objectMapper.writeValueAsString(invalidRequest);
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(requestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode").value(400));
 
@@ -77,105 +101,91 @@ public class TaskControllerTest {
 
     @Test
     public void shouldReturnOkAndListTaskResponseWhenHttpGet() throws Exception {
-        repository.save(Task.builder()
-                .name("Test")
-                .description("Desc")
-                .build());
+        repository.save(task);
 
         mockMvc.perform(get("/tasks")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.[0].id").exists())
+                .andExpect(jsonPath("$.[0].name").value(NAME))
+                .andExpect(jsonPath("$.[0].description").value(DESC));
     }
 
     @Test
     public void shouldReturnOkAndTaskResponseWhenHttpGetWithValidTaskId() throws Exception {
-        Task task = repository.save(Task.builder()
-                .name("Test")
-                .description("Desc")
-                .build());
+        Task savedTask = repository.save(task);
 
-        mockMvc.perform(get("/tasks/{id}", task.getId()))
+        mockMvc.perform(get("/tasks/{id}", savedTask.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(task.getId()))
-                .andExpect(jsonPath("$.name").value(task.getName()));
+                .andExpect(jsonPath("$.id").value(savedTask.getId()))
+                .andExpect(jsonPath("$.name").value(NAME))
+                .andExpect(jsonPath("$.description").value(DESC));
     }
 
     @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpGetWithIdNotExisting() throws Exception {
-        mockMvc.perform(get("/tasks/{id}", 20L))
+        mockMvc.perform(get("/tasks/{id}", INVALID_ID))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(404));
 
-        assertFalse(repository.existsById(20L));
+        assertFalse(repository.existsById(INVALID_ID));
     }
 
     @Test
     public void shouldReturnOkAndTaskResponseWhenHttpPutWithValidTaskRequest() throws Exception {
-        TaskRequest request = new TaskRequest("Test Updated", "Desc");
-        String json = objectMapper.writeValueAsString(request);
-        Task task = repository.save(Task.builder()
-                .name("Test")
-                .description("Desc")
-                .build());
+        TaskRequest updateRequest = factory.buildTaskRequest("Task Update", DESC);
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+        Task currentTask = repository.save(task);
 
-        mockMvc.perform(put("/tasks/{id}", task.getId())
+        mockMvc.perform(put("/tasks/{id}", currentTask.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(task.getId()))
-                .andExpect(jsonPath("$.name").value(request.name()));
+                .andExpect(jsonPath("$.name").value(updateRequest.name()));
 
         Task savedTask = repository.findById(task.getId())
                 .orElseThrow();
 
-        assertEquals(request.name(), savedTask.getName());
+        assertEquals(updateRequest.name(), savedTask.getName());
     }
 
     @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpPutWithIdNotExisting() throws Exception {
-        TaskRequest request = new TaskRequest("Test Updated", "Desc");
-        String json = objectMapper.writeValueAsString(request);
-        Long fakeId = 50L;
-        mockMvc.perform(put("/tasks/{id}", fakeId)
+        String requestJson = objectMapper.writeValueAsString(request);
+        mockMvc.perform(put("/tasks/{id}", INVALID_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(requestJson))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(404));
 
-        assertFalse(repository.existsById(fakeId));
+        assertFalse(repository.existsById(INVALID_ID));
     }
 
     @Test
     public void shouldReturnNoContentWhenHttpDeleteWithValidId() throws Exception {
-        Task task = repository.save(Task.builder()
-                .name("Test")
-                .description("Desc")
-                .build());
+        Task taskToDelete = factory.buildTask(NAME, DESC);
+        repository.save(taskToDelete);
 
-        mockMvc.perform(delete("/tasks/{id}", task.getId()))
+        mockMvc.perform(delete("/tasks/{id}", taskToDelete.getId()))
                 .andExpect(status().isNoContent());
 
-        assertFalse(repository.existsById(task.getId()));
+        assertFalse(repository.existsById(taskToDelete.getId()));
     }
 
     @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpDeleteWithInvalidId() throws Exception {
-        Long fakeId = 40L;
-        mockMvc.perform(delete("/tasks/{id}", fakeId))
+        mockMvc.perform(delete("/tasks/{id}", INVALID_ID))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(404));
 
-        assertFalse(repository.existsById(fakeId));
+        assertFalse(repository.existsById(INVALID_ID));
     }
 
     @Test
     public void shouldReturnOkAndTaskResponseWhenHttpPatchWithValidId() throws Exception {
-        Task task = repository.save(Task.builder()
-                .name("Test")
-                .description("Desc")
-                .status(TaskStatus.TO_DO)
-                .build());
+        repository.save(task);
 
         mockMvc.perform(patch("/tasks/{id}/alter-status", task.getId())
                         .param("newStatus", TaskStatus.DOING.name()))
@@ -186,9 +196,7 @@ public class TaskControllerTest {
 
     @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpPatchWithInvalidId() throws Exception {
-        Long fakeID = 40L;
-
-        mockMvc.perform(patch("/tasks/{id}/alter-status", fakeID)
+                mockMvc.perform(patch("/tasks/{id}/alter-status", INVALID_ID)
                         .param("newStatus", TaskStatus.DOING.name()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(404));
