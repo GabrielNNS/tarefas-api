@@ -17,7 +17,7 @@ public class TaskMapper {
                 .build();
     }
 
-    public TaskResponse toTarefaResponse(Task task) {
+    public TaskResponse toTaskResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())
                 .name(task.getName())
@@ -27,9 +27,9 @@ public class TaskMapper {
                 .build();
     }
 
-    public List<TaskResponse> tarefaResponseList(List<Task> tasks) {
+    public List<TaskResponse> taskResponseList(List<Task> tasks) {
         return tasks.stream()
-                .map(this::toTarefaResponse)
+                .map(this::toTaskResponse)
                 .toList();
     }
 }

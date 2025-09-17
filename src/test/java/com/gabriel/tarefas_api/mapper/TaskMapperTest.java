@@ -30,13 +30,13 @@ public class TaskMapperTest {
     }
 
     @Test
-    public void toTarefaResponseTest() {
+    public void toTaskResponseTest() {
         Task task = Task.builder()
                 .name("Teste2")
                 .description("Text")
                 .build();
 
-        TaskResponse taskResponse = mapper.toTarefaResponse(task);
+        TaskResponse taskResponse = mapper.toTaskResponse(task);
 
         assertNotNull(taskResponse);
         assertEquals(task.getId(), taskResponse.id());
@@ -47,7 +47,7 @@ public class TaskMapperTest {
     }
 
     @Test
-    public void tarefaResponseListTest() {
+    public void taskResponseListTest() {
         Task task = Task.builder()
                 .name("Teste2")
                 .description("Text")
@@ -60,7 +60,7 @@ public class TaskMapperTest {
 
         List<Task> tarefasList = List.of(task, task2);
 
-        List<TaskResponse> responseList = mapper.tarefaResponseList(tarefasList);
+        List<TaskResponse> responseList = mapper.taskResponseList(tarefasList);
 
         assertNotNull(responseList.get(0));
         assertNotNull(responseList.get(1));
