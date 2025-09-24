@@ -2,6 +2,7 @@ package com.gabriel.tarefas_api.util;
 
 import com.gabriel.tarefas_api.dto.TaskRequest;
 import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.dto.TaskUpdateRequest;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 
@@ -52,4 +53,7 @@ public class TaskFactory {
     }
 
 
+    public TaskUpdateRequest buildTaskUpdateRequest(String name, String desc) {
+        return new TaskUpdateRequest(name, desc);
+    }
 }

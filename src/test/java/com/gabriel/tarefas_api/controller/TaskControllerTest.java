@@ -1,8 +1,9 @@
 package com.gabriel.tarefas_api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.tarefas_api.dto.TaskRequest;
-import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.dto.TaskUpdateRequest;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
@@ -43,7 +44,6 @@ public class TaskControllerTest {
 
     private Task task;
     private TaskRequest request;
-    private TaskResponse response;
 
 
     @Autowired
@@ -55,17 +55,20 @@ public class TaskControllerTest {
         this.repository = repository;
     }
 
+    private String mapperToJson(TaskRequest request) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(request);
+    }
+
     @BeforeEach
     public void setUp() {
         factory = new TaskFactory();
         task = factory.buildTask(NAME, DESC);
         request = factory.buildTaskRequest(NAME, DESC);
-        response = factory.buildTaskResponse(FIXED_ID, NAME, DESC);
     }
 
     @Test
     public void shouldCreateTaskAndReturnTaskResponseWhenHttpPostWithValidTaskRequest() throws Exception {
-        String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = mapperToJson(request);
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +89,7 @@ public class TaskControllerTest {
     @Test
     public void shouldReturnBadRequestAndErrorResponseWhenHttpPostWithInvalidTaskRequest() throws Exception {
         TaskRequest invalidRequest = factory.buildTaskRequest("", DESC);
-        String requestJson = objectMapper.writeValueAsString(invalidRequest);
+        String requestJson = mapperToJson(invalidRequest);
 
         mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -133,8 +136,8 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void shouldReturnOkAndTaskResponseWhenHttpPutWithValidTaskRequest() throws Exception {
-        TaskRequest updateRequest = factory.buildTaskRequest("Task Update", DESC);
+    public void shouldReturnOkAndTaskResponseWhenHttpPutWithValidTaskRequestName() throws Exception {
+        TaskUpdateRequest updateRequest = factory.buildTaskUpdateRequest("Task Update", DESC);
         String requestJson = objectMapper.writeValueAsString(updateRequest);
         Task currentTask = repository.save(task);
 
@@ -152,8 +155,21 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void shouldReturnBadRequestAndErrorResponseWhenHttpPutWithRequestAllFieldsIsBlank() throws Exception {
+        TaskUpdateRequest invalidTaskUpdateRequest = factory.buildTaskUpdateRequest("", "");
+        String requestJson = objectMapper.writeValueAsString(invalidTaskUpdateRequest);
+        Task currentTask = repository.save(task);
+
+        mockMvc.perform(put("/tasks/{id}", currentTask.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(400));
+    }
+
+    @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpPutWithIdNotExisting() throws Exception {
-        String requestJson = objectMapper.writeValueAsString(request);
+        String requestJson = mapperToJson(request);
         mockMvc.perform(put("/tasks/{id}", INVALID_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
