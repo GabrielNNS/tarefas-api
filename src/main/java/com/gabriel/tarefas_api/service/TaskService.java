@@ -2,6 +2,7 @@ package com.gabriel.tarefas_api.service;
 
 import com.gabriel.tarefas_api.dto.TaskRequest;
 import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.dto.TaskUpdateRequest;
 import com.gabriel.tarefas_api.mapper.TaskMapper;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
@@ -40,10 +41,10 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public TaskResponse update(Long id, TaskRequest dto){
+    public TaskResponse update(Long id, TaskUpdateRequest dto){
         Task task = getUserOrThrow(id);
-        task.setName(dto.name());
-        task.setDescription(dto.description());
+        if(!dto.name().isBlank()) task.setName(dto.name());
+        if(!dto.description().isBlank()) task.setDescription(dto.description());
         repository.save(task);
         return mapper.toTaskResponse(task);
     }
@@ -64,6 +65,6 @@ public class TaskService implements ITaskService {
 
     private Task getUserOrThrow(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("O id " + id + " não existe!!"));
+                .orElseThrow(() -> new EntityNotFoundException("The id " + id + " does not exist!!"));
     }
 }
