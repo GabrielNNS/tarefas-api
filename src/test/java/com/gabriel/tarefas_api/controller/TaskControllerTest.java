@@ -2,11 +2,10 @@ package com.gabriel.tarefas_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.tarefas_api.dto.TaskRequest;
-import com.gabriel.tarefas_api.dto.TaskResponse;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
-import com.gabriel.tarefas_api.util.TaskFactory;
+import com.gabriel.tarefas_api.utils.TaskFactory;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,8 +42,6 @@ public class TaskControllerTest {
 
     private Task task;
     private TaskRequest request;
-    private TaskResponse response;
-
 
     @Autowired
     public TaskControllerTest(MockMvc mockMvc,
@@ -60,7 +57,6 @@ public class TaskControllerTest {
         factory = new TaskFactory();
         task = factory.buildTask(NAME, DESC);
         request = factory.buildTaskRequest(NAME, DESC);
-        response = factory.buildTaskResponse(FIXED_ID, NAME, DESC);
     }
 
     @Test

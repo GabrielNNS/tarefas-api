@@ -1,4 +1,4 @@
-package com.gabriel.tarefas_api.util;
+package com.gabriel.tarefas_api.utils;
 
 import com.gabriel.tarefas_api.dto.TaskRequest;
 import com.gabriel.tarefas_api.dto.TaskResponse;

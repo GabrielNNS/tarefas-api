@@ -6,7 +6,7 @@ import com.gabriel.tarefas_api.mapper.TaskMapper;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
-import com.gabriel.tarefas_api.util.TaskFactory;
+import com.gabriel.tarefas_api.utils.TaskFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,6 @@ public class TaskServiceTest {
     private static final Long FIXED_ID = 1L;
     private static final String NAME = "Task";
     private static final String DESC = "Desc";
-    private static final LocalDateTime FIXED_DATE = LocalDateTime.of(2025, 1, 1, 12, 0);
 
     private void mockMapperToTaskResponse(Task task, TaskResponse taskResponse) {
         when(mapper.toTaskResponse(task)).thenReturn(taskResponse);
