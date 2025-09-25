@@ -6,7 +6,7 @@ import com.gabriel.tarefas_api.dto.TaskResponse;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.repository.TaskRepository;
-import com.gabriel.tarefas_api.util.TaskFactory;
+import com.gabriel.tarefas_api.utils.TaskFactory;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
