@@ -45,7 +45,6 @@ public class TaskControllerTest {
     private Task task;
     private TaskRequest request;
 
-
     @Autowired
     public TaskControllerTest(MockMvc mockMvc,
                               ObjectMapper objectMapper,
