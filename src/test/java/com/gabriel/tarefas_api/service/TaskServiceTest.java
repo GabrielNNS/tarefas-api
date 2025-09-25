@@ -2,6 +2,7 @@ package com.gabriel.tarefas_api.service;
 
 import com.gabriel.tarefas_api.dto.TaskRequest;
 import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.dto.TaskUpdateRequest;
 import com.gabriel.tarefas_api.mapper.TaskMapper;
 import com.gabriel.tarefas_api.model.Task;
 import com.gabriel.tarefas_api.model.TaskStatus;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -43,6 +45,7 @@ public class TaskServiceTest {
     private Task task;
     private TaskResponse taskResponse;
     private TaskRequest taskRequest;
+    private TaskUpdateRequest taskUpdateRequest;
 
     private static final Long FIXED_ID = 1L;
     private static final String NAME = "Task";
@@ -128,18 +131,19 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void shouldSaveAndReturnTaskResponseWhenTaskRequestIdAndTaskRequestIsValid() {
-        TaskResponse updatedTaskResponse = factory.buildTaskResponse(FIXED_ID, "Task Update", "Desc Update");
+    public void shouldSaveAndReturnTaskResponseWhenTaskUpdateRequestAndTaskRequestIdAndNameIsValid() {
+        taskUpdateRequest = factory.buildTaskUpdateRequest("Task Update", "");
+        TaskResponse updatedTaskResponse = factory.buildTaskResponse(FIXED_ID, "Task Update", DESC);
 
         mockRepositoryFindById(FIXED_ID, task);
         mockMapperToTaskResponse(task, updatedTaskResponse);
 
-        TaskResponse result = service.update(1L, taskRequest);
+        TaskResponse result = service.update(1L, taskUpdateRequest);
 
         assertNotNull(result);
         assertEquals(FIXED_ID, result.id());
         assertEquals("Task Update", result.name());
-        assertEquals("Desc Update", result.description());
+        assertEquals("Desc", result.description());
         verify(repository).findById(FIXED_ID);
         verify(repository).save(any(Task.class));
     }

@@ -2,6 +2,7 @@ package com.gabriel.tarefas_api.controller;
 
 import com.gabriel.tarefas_api.dto.TaskRequest;
 import com.gabriel.tarefas_api.dto.TaskResponse;
+import com.gabriel.tarefas_api.dto.TaskUpdateRequest;
 import com.gabriel.tarefas_api.model.TaskStatus;
 import com.gabriel.tarefas_api.service.ITaskService;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @RequestBody @Valid TaskRequest dto) {
+    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @RequestBody @Valid TaskUpdateRequest dto) {
         return ResponseEntity.status(HttpStatus.OK).body(service.update(id, dto));
     }
 

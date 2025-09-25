@@ -1,8 +1,5 @@
 spring:
   application:
     name: tasks-api
-  cloud:
-    config:
-      uri: http://localhost:8888
   profiles:
     active: dev
