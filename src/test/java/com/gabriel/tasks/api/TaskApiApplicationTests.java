@@ -1,0 +1,15 @@
+package com.gabriel.tasks.api;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("inte")
+@SpringBootTest
+class TaskApiApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
