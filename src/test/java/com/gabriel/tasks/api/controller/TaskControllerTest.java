@@ -3,6 +3,7 @@ package com.gabriel.tasks.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.tasks.api.dto.TaskRequest;
 import com.gabriel.tasks.api.dto.TaskResponse;
+import com.gabriel.tasks.api.dto.TaskUpdateRequest;
 import com.gabriel.tasks.api.model.Task;
 import com.gabriel.tasks.api.model.TaskStatus;
 import com.gabriel.tasks.api.repository.TaskRepository;
@@ -134,7 +135,7 @@ public class TaskControllerTest {
 
     @Test
     public void shouldReturnOkAndTaskResponseWhenHttpPutWithValidTaskRequest() throws Exception {
-        TaskRequest updateRequest = factory.buildTaskRequest("Task Update", DESC);
+        TaskUpdateRequest updateRequest = factory.buildTaskUpdateRequest("Task Update", "");
         String requestJson = objectMapper.writeValueAsString(updateRequest);
         Task currentTask = repository.save(task);
 
@@ -161,6 +162,19 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.errorCode").value(404));
 
         assertFalse(repository.existsById(INVALID_ID));
+    }
+
+    @Test
+    public void shouldReturnBadRequestAndErrorResponseWhenHttpPutWithJsonAllFieldIsBlank() throws Exception {
+        TaskUpdateRequest updateRequest = factory.buildTaskUpdateRequest("", "");
+        String requestJson = objectMapper.writeValueAsString(updateRequest);
+        Task currentTask = repository.save(task);
+
+        mockMvc.perform(put("/tasks/{id}", currentTask.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(400));
     }
 
     @Test
@@ -196,7 +210,7 @@ public class TaskControllerTest {
 
     @Test
     public void shouldReturnNotFoundAndErrorResponseWhenHttpPatchWithInvalidId() throws Exception {
-                mockMvc.perform(patch("/tasks/{id}/alter-status", INVALID_ID)
+        mockMvc.perform(patch("/tasks/{id}/alter-status", INVALID_ID)
                         .param("newStatus", TaskStatus.DOING.name()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode").value(404));
