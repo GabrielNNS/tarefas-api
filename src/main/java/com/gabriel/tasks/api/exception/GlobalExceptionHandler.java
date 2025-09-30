@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .errorCode(status.value())
-                .error(status.getReasonPhrase())
+                .errorTitle(status.getReasonPhrase())
                 .errorMessage(message)
                 .path(path)
                 .build();
