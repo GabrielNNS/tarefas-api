@@ -3,6 +3,7 @@ package com.gabriel.tasks.api.controller;
 import com.gabriel.tasks.api.dto.TaskRequest;
 import com.gabriel.tasks.api.dto.TaskResponse;
 import com.gabriel.tasks.api.dto.TaskUpdateRequest;
+import com.gabriel.tasks.api.model.Task;
 import com.gabriel.tasks.api.model.TaskStatus;
 import com.gabriel.tasks.api.service.ITaskService;
 import jakarta.validation.Valid;
@@ -28,8 +29,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> listAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.listAll());
+    public ResponseEntity<List<TaskResponse>> listAll(@RequestParam(required = false) TaskStatus status) {
+        List<TaskResponse> tasks = (status != null)
+            ? service.listAll(status)
+            : service.listAll();
+
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
     @GetMapping("/{id}")

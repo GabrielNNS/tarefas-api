@@ -39,7 +39,6 @@ public class TaskServiceTest {
     @InjectMocks
     private TaskService service;
 
-    private TaskFactory factory;
     private Task task;
     private TaskResponse taskResponse;
     private TaskRequest taskRequest;
@@ -59,10 +58,9 @@ public class TaskServiceTest {
 
     @BeforeEach
     public void setUp() {
-        factory = new TaskFactory();
-        task = factory.buildTask(FIXED_ID, NAME, DESC);
-        taskResponse = factory.buildTaskResponse(FIXED_ID, NAME, DESC);
-        taskRequest = factory.buildTaskRequest(NAME, DESC);
+        task = TaskFactory.buildTask(FIXED_ID, NAME, DESC);
+        taskResponse = TaskFactory.buildTaskResponse(FIXED_ID, NAME, DESC);
+        taskRequest = TaskFactory.buildTaskRequest(NAME, DESC);
     }
 
     @Test
@@ -80,8 +78,8 @@ public class TaskServiceTest {
 
     @Test
     public void shouldReturnAllTasks() {
-        Task secondTask = factory.buildTask(2L, "Second Task", "Second Desc");
-        TaskResponse secondTaskResponse = factory.buildTaskResponse(2L, "Second Task", "Second Desc");
+        Task secondTask = TaskFactory.buildTask(2L, "Second Task", "Second Desc");
+        TaskResponse secondTaskResponse = TaskFactory.buildTaskResponse(2L, "Second Task", "Second Desc");
         List<Task> tasks = List.of(task, secondTask);
         List<TaskResponse> responses = List.of(taskResponse, secondTaskResponse);
 
@@ -95,6 +93,25 @@ public class TaskServiceTest {
         assertEquals(task.getName(), results.get(0).name());
         assertEquals(secondTask.getName(), results.get(1).name());
         verify(repository).findAll();
+    }
+
+    @Test
+    public void shouldReturnTasksByStatusDOINGWhenRequestContainsStatusDOING() {
+        Task taskWithStatusDoing = TaskFactory.buildTask(2L, "Other Task", "Other Desc");
+        TaskResponse taskWithStatusDoingResponse = TaskFactory.buildTaskResponse(2L, "Other Task", "Other Desc", TaskStatus.DOING);
+        List<Task> tasks = List.of(taskWithStatusDoing);
+        List<TaskResponse> responses = List.of(taskWithStatusDoingResponse);
+
+        when(repository.findByStatus(TaskStatus.DOING)).thenReturn(tasks);
+        when(mapper.taskResponseList(tasks)).thenReturn(responses);
+
+        List<TaskResponse> results = service.listAll(TaskStatus.DOING);
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals(taskWithStatusDoing.getName(), results.getFirst().name());
+        assertEquals(taskWithStatusDoing.getDescription(), results.getFirst().description());
+        assertEquals(TaskStatus.DOING, results.getFirst().status());
     }
 
     @Test
@@ -129,26 +146,43 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void shouldSaveAndReturnTaskResponseWhenTaskUpdateRequestAndTaskRequestIdAndNameIsValid() {
-        taskUpdateRequest = factory.buildTaskUpdateRequest("Task Update", "");
-        TaskResponse updatedTaskResponse = factory.buildTaskResponse(FIXED_ID, "Task Update", DESC);
+    public void shouldSaveAndReturnTaskResponseWhenTaskUpdateRequestAndTaskRequestIdAndFieldsIsValid() {
+        taskUpdateRequest = TaskFactory.buildTaskUpdateRequest("Task Update", "Desc Update");
+        TaskResponse updatedTaskResponse = TaskFactory.buildTaskResponse(FIXED_ID, "Task Update", "Desc Update");
 
         mockRepositoryFindById(FIXED_ID, task);
         mockMapperToTaskResponse(task, updatedTaskResponse);
 
-        TaskResponse result = service.update(1L, taskUpdateRequest);
+        TaskResponse result = service.update(FIXED_ID, taskUpdateRequest);
 
         assertNotNull(result);
         assertEquals(FIXED_ID, result.id());
         assertEquals("Task Update", result.name());
-        assertEquals("Desc", result.description());
+        assertEquals("Desc Update", result.description());
+        verify(repository).findById(FIXED_ID);
+        verify(repository).save(any(Task.class));
+    }
+
+    @Test
+    public void shouldKeepNameAndDescriptionWhenTaskUpdateRequestAllFieldsIsBlank() {
+        taskUpdateRequest = TaskFactory.buildTaskUpdateRequest("", "");
+
+        mockRepositoryFindById(FIXED_ID, task);
+        mockMapperToTaskResponse(task, taskResponse);
+
+        TaskResponse result = service.update(FIXED_ID, taskUpdateRequest);
+
+        assertNotNull(result);
+        assertEquals(FIXED_ID, result.id());
+        assertEquals(NAME, result.name());
+        assertEquals(DESC, result.description());
         verify(repository).findById(FIXED_ID);
         verify(repository).save(any(Task.class));
     }
 
     @Test
     public void shouldDeleteTaskWhenIdIsValid() {
-        Task taskToDelete = factory.buildTask(20L, NAME, DESC);
+        Task taskToDelete = TaskFactory.buildTask(20L, NAME, DESC);
         mockRepositoryFindById(20L, taskToDelete);
 
         service.delete(20L);
@@ -166,7 +200,7 @@ public class TaskServiceTest {
 
     @Test
     public void shouldAlterStatusWhenIdIsValid() {
-        TaskResponse newTaskResponse = factory.buildTaskResponse(FIXED_ID, NAME, DESC, TaskStatus.DOING);
+        TaskResponse newTaskResponse = TaskFactory.buildTaskResponse(FIXED_ID, NAME, DESC, TaskStatus.DOING);
 
         mockRepositoryFindById(FIXED_ID, task);
         mockMapperToTaskResponse(task, newTaskResponse);
