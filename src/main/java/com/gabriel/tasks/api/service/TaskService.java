@@ -36,7 +36,7 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public List<TaskResponse> listAll(TaskStatus status) {
+    public List<TaskResponse> listAllByStatus(TaskStatus status) {
         return mapper.taskResponseList(repository.findByStatus(status));
     }
 

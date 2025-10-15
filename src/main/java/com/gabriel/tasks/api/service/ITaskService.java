@@ -11,7 +11,7 @@ public interface ITaskService {
 
     TaskResponse create(TaskRequest dto);
     List<TaskResponse> listAll();
-    List<TaskResponse> listAll(TaskStatus status);
+    List<TaskResponse> listAllByStatus(TaskStatus status);
     TaskResponse findById(Long id);
     TaskResponse update(Long id, TaskUpdateRequest dto);
     void delete(Long id);

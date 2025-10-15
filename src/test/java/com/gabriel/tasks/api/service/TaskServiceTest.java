@@ -105,7 +105,7 @@ public class TaskServiceTest {
         when(repository.findByStatus(TaskStatus.DOING)).thenReturn(tasks);
         when(mapper.taskResponseList(tasks)).thenReturn(responses);
 
-        List<TaskResponse> results = service.listAll(TaskStatus.DOING);
+        List<TaskResponse> results = service.listAllByStatus(TaskStatus.DOING);
 
         assertNotNull(results);
         assertEquals(1, results.size());
