@@ -42,8 +42,6 @@ public class TaskControllerTest {
 
     private Task task;
     private TaskRequest request;
-    private TaskResponse response;
-
 
     @Autowired
     public TaskControllerTest(MockMvc mockMvc,
@@ -58,7 +56,6 @@ public class TaskControllerTest {
     public void setUp() {
         task = TaskFactory.buildTask(NAME, DESC);
         request = TaskFactory.buildTaskRequest(NAME, DESC);
-        response = TaskFactory.buildTaskResponse(FIXED_ID, NAME, DESC);
     }
 
     @Test
@@ -124,6 +121,14 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.[0].name").value(NAME))
                 .andExpect(jsonPath("$.[0].description").value(DESC))
                 .andExpect(jsonPath("$.[0].status").value("DOING"));
+    }
+
+    @Test
+    public void shouldReturnBadRequestAndErrorResponseWhenGetAllByIDParamInvalid() throws Exception {
+        mockMvc.perform((get("/tasks?status=TO"))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(400));
     }
 
     @Test
